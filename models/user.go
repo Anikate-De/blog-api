@@ -1,0 +1,35 @@
+package models
+
+import (
+	"time"
+
+	"de.anikate/blog-api/db"
+)
+
+type User struct {
+	Id        int64     `json:"id"`
+	Name      string    `json:"name" binding:"required"`
+	Email     string    `json:"email" binding:"required"`
+	Password  string    `json:"password" binding:"required"`
+	About     string    `json:"about"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+func (u *User) Save() error {
+	query := `
+	insert into user(name, email, password, about, created_at)
+	values(?, ?, ?, ?, datetime('now'));
+	`
+
+	result, err := db.DB.Exec(query, u.Name, u.Email, u.Password, u.About)
+	if err != nil {
+		return err
+	}
+
+	u.Id, err = result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
