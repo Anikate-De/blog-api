@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"de.anikate/blog-api/models"
+	"de.anikate/blog-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -63,8 +64,17 @@ func login(context *gin.Context) {
 		return
 	}
 
+	authToken, err := utils.GenerateJWT(user.Email, user.Id)
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to generate token.",
+		})
+		return
+	}
+
 	context.JSON(http.StatusAccepted, gin.H{
 		"message": "Login successful!",
-		"token":   "return JWT here",
+		"token":   authToken,
 	})
 }

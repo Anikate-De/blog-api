@@ -44,12 +44,12 @@ func (u *User) Save() error {
 }
 
 func (u *User) Authenticate() error {
-	query := `select password from user where email = ?`
+	query := `select password, uid from user where email = ?`
 
 	row := db.DB.QueryRow(query, u.Email)
 
 	var hash string
-	err := row.Scan(&hash)
+	err := row.Scan(&hash, &u.Id)
 	if err != nil {
 		return err
 	}
