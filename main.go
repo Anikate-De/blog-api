@@ -3,10 +3,13 @@ package main
 import (
 	"net/http"
 
+	"de.anikate/blog-api/db"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	db.Connect()
+
 	engine := gin.Default()
 
 	engine.GET("/", home)
