@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -11,6 +12,10 @@ var DB *sql.DB
 
 // Connect to the SQLite DB
 func Connect() {
+	if _, err := os.Stat("./out"); os.IsNotExist(err) {
+		os.Mkdir("out", os.ModeDir)
+	}
+
 	var err error
 	DB, err = sql.Open("sqlite3", "out/blog.db")
 

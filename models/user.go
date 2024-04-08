@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"de.anikate/blog-api/db"
+	"de.anikate/blog-api/utils"
 )
 
 type User struct {
@@ -16,6 +17,14 @@ type User struct {
 }
 
 func (u *User) Save() error {
+
+	hash, err := utils.GetHashedPassword(u.Password)
+	if err != nil {
+		return err
+	}
+
+	u.Password = hash
+
 	query := `
 	insert into user(name, email, password, about, created_at)
 	values(?, ?, ?, ?, datetime('now'));
