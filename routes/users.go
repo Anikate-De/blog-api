@@ -35,8 +35,36 @@ func signup(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{
+	context.JSON(http.StatusCreated, gin.H{
 		"message": "User created successfully!",
 	})
+}
 
+func login(context *gin.Context) {
+	var user *models.User = &models.User{
+		Name: "_",
+	}
+
+	err := context.ShouldBindJSON(&user)
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid Request Body, must contain string fields email and password.",
+		})
+		return
+	}
+
+	err = user.Authenticate()
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Invalid login credentials.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusAccepted, gin.H{
+		"message": "Login successful!",
+		"token":   "return JWT here",
+	})
 }

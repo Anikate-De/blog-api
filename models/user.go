@@ -42,3 +42,17 @@ func (u *User) Save() error {
 
 	return nil
 }
+
+func (u *User) Authenticate() error {
+	query := `select password from user where email = ?`
+
+	row := db.DB.QueryRow(query, u.Email)
+
+	var hash string
+	err := row.Scan(&hash)
+	if err != nil {
+		return err
+	}
+
+	return utils.CompareHash(u.Password, hash)
+}

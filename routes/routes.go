@@ -14,6 +14,9 @@ func Setup(engine *gin.Engine) {
 	// Create a new user
 	engine.POST("/signup", signup)
 
+	// Login
+	engine.POST("/login", login)
+
 }
 
 func home(context *gin.Context) {
