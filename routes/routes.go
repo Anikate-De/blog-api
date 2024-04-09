@@ -23,6 +23,9 @@ func Setup(engine *gin.Engine) {
 
 	// Get all blogs
 	engine.GET("/blogs", getAllBlogs)
+
+	// Create a blog
+	authenticated.POST("/blogs", postBlog)
 }
 
 func home(context *gin.Context) {

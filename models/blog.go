@@ -8,7 +8,7 @@ import (
 
 type Blog struct {
 	Id        int64     `json:"id"`
-	Title     string    `json:"string" binding:"required"`
+	Title     string    `json:"title" binding:"required"`
 	Content   string    `json:"content" binding:"required"`
 	CreatedAt time.Time `json:"created_at"`
 	Likes     int64     `json:"likes"`
@@ -39,4 +39,25 @@ func AllBlogs() ([]Blog, error) {
 	}
 
 	return blogs, err
+}
+
+func (blog *Blog) Save() error {
+	query := `
+	insert into blog(
+		title,
+		content,
+		created_at,
+		author_id
+	) values (
+		?, ?, datetime('now'), ?
+	);  
+	`
+
+	result, err := db.DB.Exec(query, blog.Title, blog.Content, blog.AuthorId)
+	if err != nil {
+		return err
+	}
+
+	blog.Id, err = result.LastInsertId()
+	return err
 }
