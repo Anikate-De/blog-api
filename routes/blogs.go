@@ -52,14 +52,13 @@ func postBlog(context *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		context.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid Request Body, string fields title, content, and integer author_id are required.",
+			"message": "Invalid Request Body, string fields title and content are required.",
 		})
 		return
 	}
 
 	err = blog.Save()
 	if err != nil {
-		log.Println(blog.AuthorId)
 		log.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Unable to post blog",
