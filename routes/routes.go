@@ -23,20 +23,22 @@ func Setup(engine *gin.Engine) {
 	// Get all blogs
 	engine.GET("/blogs", getAllBlogs)
 	// Get a blog by ID
-	engine.GET("/blogs/:id", getBlog)
+	engine.GET("/blogs/:bid", getBlog)
 
 	// Create a blog
 	authenticated.POST("/blogs", postBlog)
 	// Update a blog
-	authenticated.PUT("/blogs/:id", updateBlog)
+	authenticated.PUT("/blogs/:bid", updateBlog)
 	// Delete a blog
-	authenticated.DELETE("/blogs/:id", deleteBlog)
+	authenticated.DELETE("/blogs/:bid", deleteBlog)
 
 	// Get on comments on a blog
-	engine.GET("/blogs/:id/comments", getBlogComments)
+	engine.GET("/blogs/:bid/comments", getBlogComments)
 
 	// Comment on a blog
 	authenticated.POST("/blogs/:bid/comments", addComment)
+	// Update a comment
+	authenticated.PUT("/blogs/:bid/comments/:cid", editComment)
 }
 
 func home(context *gin.Context) {

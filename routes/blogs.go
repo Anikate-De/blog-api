@@ -24,7 +24,7 @@ func getAllBlogs(context *gin.Context) {
 }
 
 func getBlog(context *gin.Context) {
-	id, err := strconv.ParseInt(context.Params.ByName("id"), 10, 64)
+	id, err := strconv.ParseInt(context.Params.ByName("bid"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"message": "Blog ID is ill-formatted",
@@ -73,7 +73,7 @@ func postBlog(context *gin.Context) {
 }
 
 func updateBlog(context *gin.Context) {
-	id, err := strconv.ParseInt(context.Params.ByName("id"), 10, 64)
+	id, err := strconv.ParseInt(context.Params.ByName("bid"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"message": "Blog ID is ill-formatted",
@@ -126,7 +126,7 @@ func updateBlog(context *gin.Context) {
 }
 
 func deleteBlog(context *gin.Context) {
-	id, err := strconv.ParseInt(context.Params.ByName("id"), 10, 64)
+	id, err := strconv.ParseInt(context.Params.ByName("bid"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"message": "Blog ID is ill-formatted",

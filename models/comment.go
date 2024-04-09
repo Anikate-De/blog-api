@@ -85,3 +85,45 @@ func AllComments(blogId int64) ([]Comment, error) {
 
 	return comments, err
 }
+
+func GetCommentById(commentId, blogId int64) (*Comment, error) {
+	query := `
+	select 
+		id,
+		body,
+		coalesce(parent_id, 0),
+		created_at,
+		author_id,
+		blog_id
+	from comment 
+	where id = ? and blog_id = ?;`
+
+	result := db.DB.QueryRow(query, commentId, blogId)
+
+	var comment Comment
+
+	err := result.Scan(
+		&comment.Id,
+		&comment.Body,
+		&comment.ParentId,
+		&comment.CreatedAt,
+		&comment.AuthorId,
+		&comment.BlogId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &comment, err
+}
+
+func (comment *Comment) Update() error {
+	query := `
+	update comment
+	set body = ?
+	where id = ?;
+	`
+
+	_, err := db.DB.Exec(query, comment.Body, comment.Id)
+	return err
+}
