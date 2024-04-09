@@ -30,7 +30,14 @@ func AllBlogs() ([]Blog, error) {
 	for rows.Next() {
 		var blog Blog
 
-		err = rows.Scan(&blog)
+		err = rows.Scan(&blog.Id,
+			&blog.Title,
+			&blog.Content,
+			&blog.CreatedAt,
+			&blog.Likes,
+			&blog.Shares,
+			&blog.AuthorId,
+		)
 		if err != nil {
 			return nil, err
 		}
