@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	"de.anikate/blog-api/db"
@@ -99,5 +100,22 @@ func (blog *Blog) Update() error {
 	`
 
 	_, err := db.DB.Exec(query, blog.Title, blog.Content, blog.AuthorId)
+	return err
+}
+
+func (blog *Blog) Delete() error {
+	query := `
+	delete from blog
+	where id = ? and author_id = ?;
+	`
+
+	res, err := db.DB.Exec(query, blog.Id, blog.AuthorId)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("not found")
+	}
 	return err
 }

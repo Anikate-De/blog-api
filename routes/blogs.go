@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"de.anikate/blog-api/models"
 	"github.com/gin-gonic/gin"
@@ -81,7 +82,7 @@ func updateBlog(context *gin.Context) {
 		return
 	}
 
-	uid := context.Value("uid").(int64)
+	uid := context.GetInt64("uid")
 
 	blog, err := models.GetBlogById(id)
 	if err != nil {
@@ -122,5 +123,39 @@ func updateBlog(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Updated blog successfully!",
+	})
+}
+
+func deleteBlog(context *gin.Context) {
+	id, err := strconv.ParseInt(context.Params.ByName("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Blog ID is ill-formatted",
+		})
+		return
+	}
+
+	uid := context.GetInt64("uid")
+
+	blog := models.Blog{
+		Id:       id,
+		AuthorId: uid,
+	}
+	err = blog.Delete()
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			context.JSON(http.StatusNotFound, gin.H{
+				"message": "Unable to delete blog, could not find blog with given id and author details.",
+			})
+			return
+		}
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to delete blog.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Deleted blog successfully!",
 	})
 }
