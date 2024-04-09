@@ -45,3 +45,43 @@ func (comment *Comment) Save() error {
 	comment.Id, err = result.LastInsertId()
 	return err
 }
+
+func AllComments(blogId int64) ([]Comment, error) {
+	query := `
+	select id,
+		body, 
+		coalesce(parent_id, 0),
+		created_at, 
+		author_id, 
+		blog_id 
+	from comment 
+	where blog_id = ?;`
+
+	rows, err := db.DB.Query(query, blogId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var comments []Comment = []Comment{}
+	for rows.Next() {
+		var comment Comment
+
+		err = rows.Scan(
+			&comment.Id,
+			&comment.Body,
+			&comment.ParentId,
+			&comment.CreatedAt,
+			&comment.AuthorId,
+			&comment.BlogId,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		comments = append(comments, comment)
+	}
+
+	return comments, err
+}

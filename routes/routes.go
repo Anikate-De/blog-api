@@ -32,6 +32,9 @@ func Setup(engine *gin.Engine) {
 	// Delete a blog
 	authenticated.DELETE("/blogs/:id", deleteBlog)
 
+	// Get on comments on a blog
+	engine.GET("/blogs/:id/comments", getBlogComments)
+
 	// Comment on a blog
 	authenticated.POST("/blogs/:bid/comments", addComment)
 }

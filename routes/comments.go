@@ -47,3 +47,24 @@ func addComment(context *gin.Context) {
 		"comment": comment,
 	})
 }
+
+func getBlogComments(context *gin.Context) {
+	blogId, err := strconv.ParseInt(context.Params.ByName("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Blog ID is ill-formatted.",
+		})
+		return
+	}
+
+	comments, err := models.AllComments(blogId)
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to retrieve comments.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, comments)
+}
