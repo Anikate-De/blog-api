@@ -90,3 +90,14 @@ func (blog *Blog) Save() error {
 	blog.Id, err = result.LastInsertId()
 	return err
 }
+
+func (blog *Blog) Update() error {
+	query := `
+	update blog
+	set title = ?, content = ?
+	where id = ?;
+	`
+
+	_, err := db.DB.Exec(query, blog.Title, blog.Content, blog.AuthorId)
+	return err
+}

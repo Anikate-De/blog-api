@@ -71,3 +71,56 @@ func postBlog(context *gin.Context) {
 		"id":      blog.Id,
 	})
 }
+
+func updateBlog(context *gin.Context) {
+	id, err := strconv.ParseInt(context.Params.ByName("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Blog ID is ill-formatted",
+		})
+		return
+	}
+
+	uid := context.Value("uid").(int64)
+
+	blog, err := models.GetBlogById(id)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{
+			"message": "Blog does not exist.",
+		})
+		return
+	}
+
+	if blog.AuthorId != uid {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Not authorized to update blog post.",
+		})
+		return
+	}
+
+	receivedBlog := *blog
+
+	err = context.ShouldBindJSON(&receivedBlog)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid POST body.",
+		})
+		return
+	}
+
+	blog.Title = receivedBlog.Title
+	blog.Content = receivedBlog.Content
+	err = blog.Update()
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to update blog.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Updated blog successfully!",
+	})
+}

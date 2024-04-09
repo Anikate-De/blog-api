@@ -27,6 +27,8 @@ func Setup(engine *gin.Engine) {
 
 	// Create a blog
 	authenticated.POST("/blogs", postBlog)
+	// Update a blog
+	authenticated.PUT("/blogs/:id", updateBlog)
 }
 
 func home(context *gin.Context) {
