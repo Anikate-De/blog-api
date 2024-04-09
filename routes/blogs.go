@@ -3,6 +3,7 @@ package routes
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"de.anikate/blog-api/models"
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,26 @@ func getAllBlogs(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, blogs)
+}
+
+func getBlog(context *gin.Context) {
+	id, err := strconv.ParseInt(context.Params.ByName("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Blog ID is ill-formatted",
+		})
+		return
+	}
+
+	blog, err := models.GetBlogById(id)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{
+			"message": "Blog does not exist.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, blog)
 }
 
 func postBlog(context *gin.Context) {

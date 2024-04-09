@@ -17,12 +17,13 @@ func Setup(engine *gin.Engine) {
 
 	// Create a new user
 	engine.POST("/signup", signup)
-
 	// Login
 	engine.POST("/login", login)
 
 	// Get all blogs
 	engine.GET("/blogs", getAllBlogs)
+	// Get a blog by ID
+	engine.GET("/blogs/:id", getBlog)
 
 	// Create a blog
 	authenticated.POST("/blogs", postBlog)

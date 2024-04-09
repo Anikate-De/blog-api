@@ -48,6 +48,28 @@ func AllBlogs() ([]Blog, error) {
 	return blogs, err
 }
 
+func GetBlogById(id int64) (*Blog, error) {
+	query := `select * from blog where id = ?;`
+
+	result := db.DB.QueryRow(query, id)
+
+	var blog Blog
+
+	err := result.Scan(&blog.Id,
+		&blog.Title,
+		&blog.Content,
+		&blog.CreatedAt,
+		&blog.Likes,
+		&blog.Shares,
+		&blog.AuthorId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &blog, err
+}
+
 func (blog *Blog) Save() error {
 	query := `
 	insert into blog(
