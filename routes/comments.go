@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"de.anikate/blog-api/models"
 	"github.com/gin-gonic/gin"
@@ -127,5 +128,48 @@ func editComment(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Updated comment successfully!",
+	})
+}
+
+func deleteComment(context *gin.Context) {
+	blogId, err := strconv.ParseInt(context.Params.ByName("bid"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Blog ID is ill-formatted",
+		})
+		return
+	}
+
+	commentId, err := strconv.ParseInt(context.Params.ByName("cid"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Comment ID is ill-formatted",
+		})
+		return
+	}
+
+	uid := context.GetInt64("uid")
+
+	comment := models.Comment{
+		Id:       commentId,
+		BlogId:   blogId,
+		AuthorId: uid,
+	}
+	err = comment.Delete()
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			context.JSON(http.StatusNotFound, gin.H{
+				"message": "Unable to delete comment, could not find comment with given id, blog and author details.",
+			})
+			return
+		}
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to delete comment.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Deleted comment successfully!",
 	})
 }
