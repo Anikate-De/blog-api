@@ -12,14 +12,17 @@ func Setup(engine *gin.Engine) {
 	// Home
 	engine.GET("/", home)
 
-	allRoutes := engine.Group("/")
-	allRoutes.Use(middleware.Auth)
+	authenticated := engine.Group("/")
+	authenticated.Use(middleware.Auth)
 
 	// Create a new user
 	engine.POST("/signup", signup)
 
 	// Login
 	engine.POST("/login", login)
+
+	// Get all blogs
+	engine.GET("/blogs", getAllBlogs)
 }
 
 func home(context *gin.Context) {
