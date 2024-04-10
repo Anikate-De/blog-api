@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	"de.anikate/blog-api/db"
@@ -8,7 +9,7 @@ import (
 )
 
 type User struct {
-	Id        int64     `json:"id"`
+	Uid       int64     `json:"uid"`
 	Name      string    `json:"name" binding:"required"`
 	Email     string    `json:"email" binding:"required"`
 	Password  string    `json:"password" binding:"required"`
@@ -35,7 +36,7 @@ func (u *User) Save() error {
 		return err
 	}
 
-	u.Id, err = result.LastInsertId()
+	u.Uid, err = result.LastInsertId()
 	if err != nil {
 		return err
 	}
@@ -49,10 +50,27 @@ func (u *User) Authenticate() error {
 	row := db.DB.QueryRow(query, u.Email)
 
 	var hash string
-	err := row.Scan(&hash, &u.Id)
+	err := row.Scan(&hash, &u.Uid)
 	if err != nil {
 		return err
 	}
 
 	return utils.CompareHash(u.Password, hash)
+}
+
+func (user *User) Delete() error {
+	query := `
+	delete from user
+	where uid = ?;
+	`
+
+	res, err := db.DB.Exec(query, user.Uid)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return err
 }

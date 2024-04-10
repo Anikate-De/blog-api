@@ -20,6 +20,9 @@ func Setup(engine *gin.Engine) {
 	// Login
 	engine.POST("/login", login)
 
+	// Un-register a user
+	authenticated.DELETE("/unregister", unRegister)
+
 	// Get all blogs
 	engine.GET("/blogs", getAllBlogs)
 	// Get a blog by ID

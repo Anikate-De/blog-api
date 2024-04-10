@@ -64,7 +64,7 @@ func login(context *gin.Context) {
 		return
 	}
 
-	authToken, err := utils.GenerateJWT(user.Email, user.Id)
+	authToken, err := utils.GenerateJWT(user.Email, user.Uid)
 	if err != nil {
 		log.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{
@@ -76,5 +76,30 @@ func login(context *gin.Context) {
 	context.JSON(http.StatusAccepted, gin.H{
 		"message": "Login successful!",
 		"token":   authToken,
+	})
+}
+
+func unRegister(context *gin.Context) {
+	uid := context.GetInt64("uid")
+
+	user := models.User{
+		Uid: uid,
+	}
+	err := user.Delete()
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			context.JSON(http.StatusNotFound, gin.H{
+				"message": "Unable to find user. Please re-fresh token.",
+			})
+			return
+		}
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to delete user.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Deleted user successfully!",
 	})
 }
