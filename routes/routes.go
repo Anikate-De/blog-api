@@ -44,6 +44,8 @@ func Setup(engine *gin.Engine) {
 
 	// Like a Blog
 	authenticated.POST("/blogs/:bid/likes", likeBlog)
+	// Unlike a Blog
+	authenticated.DELETE("/blogs/:bid/likes", unlikeBlog)
 }
 
 func home(context *gin.Context) {

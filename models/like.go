@@ -39,3 +39,13 @@ func (like *Like) Save() error {
 	like.Id, err = result.LastInsertId()
 	return err
 }
+
+func (like *Like) Delete() error {
+	query := `
+	delete from heart where blog_id = ? and author_id = ?;
+	update blog set likes = likes - 1 WHERE id = ?;  
+	`
+
+	_, err := db.DB.Exec(query, like.BlogId, like.AuthorId, like.BlogId)
+	return err
+}
