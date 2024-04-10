@@ -41,6 +41,9 @@ func Setup(engine *gin.Engine) {
 	authenticated.PUT("/blogs/:bid/comments/:cid", editComment)
 	// Delete a comment
 	authenticated.DELETE("/blogs/:bid/comments/:cid", deleteComment)
+
+	// Like a Blog
+	authenticated.POST("/blogs/:bid/likes", likeBlog)
 }
 
 func home(context *gin.Context) {
