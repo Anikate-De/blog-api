@@ -95,3 +95,14 @@ func GetUserByID(uid int64) (*User, error) {
 
 	return &user, err
 }
+
+func (user *User) Update() error {
+	query := `
+	update user
+	set name = ?, about = ?
+	where uid = ?;
+	`
+
+	_, err := db.DB.Exec(query, user.Name, user.About, user.Uid)
+	return err
+}

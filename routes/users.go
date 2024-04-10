@@ -90,7 +90,7 @@ func unRegister(context *gin.Context) {
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			context.JSON(http.StatusNotFound, gin.H{
-				"message": "Unable to find user. Please re-fresh token.",
+				"message": "Unable to find user, please refresh token.",
 			})
 			return
 		}
@@ -123,4 +123,38 @@ func getUser(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, user)
+}
+
+func updateUser(context *gin.Context) {
+	uid := context.GetInt64("uid")
+	user, err := models.GetUserByID(uid)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{
+			"message": "Unable to find user, please refresh token.",
+		})
+		return
+	}
+	user.Password = "_"
+
+	err = context.ShouldBindJSON(&user)
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid Request Body.",
+		})
+		return
+	}
+
+	user.Uid = uid
+	err = user.Update()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to update user",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Updated user successfully!",
+	})
 }

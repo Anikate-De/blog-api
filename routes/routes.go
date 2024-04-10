@@ -24,6 +24,8 @@ func Setup(engine *gin.Engine) {
 
 	// Un-register a user
 	authenticated.DELETE("/unregister", unRegister)
+	// Update User
+	authenticated.PUT("/users/update", updateUser)
 
 	// Get all blogs
 	engine.GET("/blogs", getAllBlogs)
