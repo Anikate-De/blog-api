@@ -19,6 +19,8 @@ func Setup(engine *gin.Engine) {
 	engine.POST("/signup", signup)
 	// Login
 	engine.POST("/login", login)
+	// Get User by ID
+	engine.GET("/users/:uid", getUser)
 
 	// Un-register a user
 	authenticated.DELETE("/unregister", unRegister)

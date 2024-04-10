@@ -3,6 +3,7 @@ package routes
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"de.anikate/blog-api/models"
@@ -102,4 +103,24 @@ func unRegister(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Deleted user successfully!",
 	})
+}
+
+func getUser(context *gin.Context) {
+	uid, err := strconv.ParseInt(context.Params.ByName("uid"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "User ID is ill-formatted",
+		})
+		return
+	}
+
+	user, err := models.GetUserByID(uid)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{
+			"message": "User does not exist.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, user)
 }

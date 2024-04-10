@@ -12,7 +12,7 @@ type User struct {
 	Uid       int64     `json:"uid"`
 	Name      string    `json:"name" binding:"required"`
 	Email     string    `json:"email" binding:"required"`
-	Password  string    `json:"password" binding:"required"`
+	Password  string    `json:"password,omitempty" binding:"required"`
 	About     string    `json:"about"`
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -73,4 +73,25 @@ func (user *User) Delete() error {
 		return errors.New("not found")
 	}
 	return err
+}
+
+func GetUserByID(uid int64) (*User, error) {
+	query := `select uid, name, email, about, created_at from user where uid = ?;`
+
+	result := db.DB.QueryRow(query, uid)
+
+	var user User
+
+	err := result.Scan(
+		&user.Uid,
+		&user.Name,
+		&user.Email,
+		&user.About,
+		&user.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, err
 }
