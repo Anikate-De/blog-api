@@ -119,3 +119,22 @@ func (blog *Blog) Delete() error {
 	}
 	return err
 }
+
+func ShareBlog(blogId int64) error {
+	query := `
+	update blog
+	set shares = shares + 1
+	where id = ?;
+	`
+
+	rows, err := db.DB.Exec(query, blogId)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := rows.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return err
+}

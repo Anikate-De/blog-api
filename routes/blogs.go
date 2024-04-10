@@ -158,3 +158,31 @@ func deleteBlog(context *gin.Context) {
 		"message": "Deleted blog successfully!",
 	})
 }
+
+func shareBlog(context *gin.Context) {
+	blogId, err := strconv.ParseInt(context.Params.ByName("bid"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Blog ID is ill-formatted",
+		})
+		return
+	}
+
+	err = models.ShareBlog(blogId)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			context.JSON(http.StatusNotFound, gin.H{
+				"message": "Blog does not exist.",
+			})
+			return
+		}
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to share blog.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Blog shared successfully",
+	})
+}
