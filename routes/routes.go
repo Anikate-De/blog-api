@@ -42,6 +42,9 @@ func Setup(engine *gin.Engine) {
 	// Delete a comment
 	authenticated.DELETE("/blogs/:bid/comments/:cid", deleteComment)
 
+	// Get all likes on a Blog
+	engine.GET("/blogs/:bid/likes", getAllLikes)
+
 	// Like a Blog
 	authenticated.POST("/blogs/:bid/likes", likeBlog)
 	// Unlike a Blog

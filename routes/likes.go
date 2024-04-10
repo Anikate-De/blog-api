@@ -102,3 +102,32 @@ func unlikeBlog(context *gin.Context) {
 		"message": "Blog un-liked successfully!",
 	})
 }
+
+func getAllLikes(context *gin.Context) {
+	blogId, err := strconv.ParseInt(context.Params.ByName("bid"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Blog ID is ill-formatted",
+		})
+		return
+	}
+
+	_, err = models.GetBlogById(blogId)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{
+			"message": "Blog does not exist.",
+		})
+		return
+	}
+
+	likes, err := models.AllLikes(blogId)
+	if err != nil {
+		log.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Unable to retrieve likes.",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, likes)
+}
