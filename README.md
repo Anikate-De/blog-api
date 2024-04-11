@@ -57,7 +57,8 @@ Check out the [documentation](https://documenter.getpostman.com/view/4793515/2sA
 
 Contributions are always welcome!
 
-See the [Contribution Guide](contributing.md) for ways to get started.
+If you'd like to see a feature get added, create a new issue!
+Send in your PRs and improvements/bug fixes
 
 ## 📖Lessons Learned
 
