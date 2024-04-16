@@ -79,6 +79,4 @@ I learnt many things along the way, the most notable ones are mentioned below -
 
 ## 📝 License
 
-Copyright © 2024-present, Anikate De
-
 This project is licensed under [Apache License 2.0](LICENSE)
